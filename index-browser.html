@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-TW" prefix="og: http://ogp.me/ns#">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+
+    <meta name="keywords" property="og:article:tag" content="komica-wiki, reko-wiki, web-archive, wayback machine, 備份">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" href="https://rekowiki.org/w/images/logo1.ico">
+    <!-- <link rel="apple-touch-icon" type="image/png" href="ext/icon.png"> -->
+    <title>Komica Wiki github 備份瀏覽器</title>
+  </head>
+  <body>
+    <fieldset>索引資料
+      <label>url: <input name="index-path" value="https://mwzhx.github.io/komicawiki-backup/_lists_and_other/index.ls"> </label>
+      <label>file: <input name="index-file" type="file"></label>
+      <button onclick="kBrowser.load()">更新</button>
+    </fieldset>
+    <fieldset>索引資料
+    <label>搜尋 <input name="q">
+      <button class="search">搜尋</button> <button class="reset">清除</button></label>
+    <label title='格式 "神奇寶貝.*列表" 或是 "/jojo/i"'>
+      <input type="checkbox" name="regexp-match">RegExp 匹配</label>
+    </fieldset>
+
+    <output name="search-result"></output>
+
+    <style>
+      output > ol > li > button, output > ol > li > a {
+          margin-left: 1ex;
+      }
+      output {
+          display: block;
+          min-height: 5em;
+          border: solid 1px;
+          margin: 1em 0;
+      }
+      label { display: block; }
+      fieldset { margin: 1em 0; }
+    </style>
+
+    <script>
+"use strict";
+
+let $d = document;
+
+let $w = window;
+
+function $all(q, root = $d) {
+    return Array.from(root.querySelectorAll(q));
+}
+
+function $(q, root = $d) {
+    return root.querySelector(q);
+}
+
+function run(f) {
+    return f();
+}
+
+let $id = new Proxy({}, {
+    get(o, id) {
+        let e = $(`#${id}`);
+        if (!e) e = $(`[name=${id}]`);
+        return e;
+    }
+});
+
+    function $create(tag, parent, attr) {
+        const elm = $d.createElement(tag);
+        if (parent) parent.appendChild(elm);
+        if (attr) Object.assign(elm, attr);
+        return elm;
+    }
+
+function $text(q, regexp, root = $d) {
+    return $all(q, root).filter(e => regexp.test(e.textContent));
+}
+
+function chomp(a) {
+    if (!a[0]) a.shift();
+}
+
+async function waitUntil(f, interval, timeout) {
+    let res;
+    const start = Date.now();
+    do {
+        await sleep(interval);
+        if ((Date.now() - start) / 1e3 > timeout) {
+            throw new Error("waitUntil timeout");
+        }
+        res = f();
+    } while (!res);
+    return res;
+}
+
+      class KBrowser {
+          async load() {
+              let t
+              b: {
+                  let e = $id['index-file']
+                  if (e.files.length != 1) break b
+                  let blob = new Blob([e.files[0]])
+                  t = await blob.text()
+                  e.value = ''
+              }
+              if (!t) {
+                  this.path = $id['index-path'].value
+                  const r = await fetch(this.path)
+                  let t = await r.text()
+              }
+              t = t.trim().replace(/\r/g, '')
+              this.fileList = t.split('\n')
+          }
+          register() {
+              if (!this.fileList) this.load()
+              $id['search-result'].addEventListener(
+                  'click', this.previewHtmlHandler.bind(this)
+              )
+              $id['q'].addEventListener('keydown', evt => {
+                  if (evt.key == 'Enter') this.search(evt.target.value)
+              })
+              $('[name=q] ~ button.search').addEventListener('click', evt => {
+                  this.search($id['q'].value)
+              })
+              $('[name=q] ~ button.reset').addEventListener('click', evt => {
+                  $id['q'].value = ''
+                  $id['q'].focus()
+              })
+              window.addEventListener('popstate', evt => {
+                  const o = evt.state
+                  $id['search-result'].innerHTML = o.resultHtml
+                  $id.q = o.q
+              })
+          }
+          githubBaseUrl = 'https://github.com/mwzhx/komicawiki-backup/blob/master'
+          // githubRawBaseUrl = 'https://github.com/mwzhx/komicawiki-backup/raw/refs/heads/master'
+          githubRawBaseUrl = 'https://raw.githubusercontent.com/mwzhx/komicawiki-backup/refs/heads/master'
+          regexpFormat = /^\/(.+)\/(\w*)$/
+          search(q) {
+              let r
+              if (this.searchWithRegExp) {
+                  let re
+                  let m = q.match(this.regexpFormat)
+                  if (m) {
+                      re = new RegExp(m[1], m[2])
+                  }
+                  else re = new RegExp(q)
+                  r = this.fileList.filter(t => re.test(t))
+              }
+              else r = this.fileList.filter(t => t.includes(q))
+
+              const e = $id['search-result']
+              this.searchClear()
+              const ol = $create('ol', e)
+              r.map(t => {
+                  const li = $create('li')
+                  li.textContent = t + ' '
+                  li.dataset.path = t
+                  let te = t.replace(/%/g, '%25')
+                  $create('button', li, {
+                      className: 'preview',
+                      textContent: 'preview'
+                  })
+                  $create('a', li, {
+                      className: 'github',
+                      href: this.githubBaseUrl + '/' + te,
+                      textContent: 'github'
+                  })
+                  $create('a', li, {
+                      className: 'html',
+                      title: '右鍵另存新檔以下載 html 檔案',
+                      href: this.githubRawBaseUrl + '/' + te,
+                      textContent: 'html'
+                  })
+                  return li
+              }).forEach(li => ol.appendChild(li))
+              let qs = '?q=' + encodeURIComponent(q)
+              if (this.searchWithRegExp) qs += '&regexp-match=on'
+              history.pushState({resultHtml: ol.outerHTML, q}, null, qs)
+          }
+          searchClear() {
+              const e = $id['search-result']
+              for (const b of $all('button.preview[data-blob-url]')) {
+                  URL.revokeObjectURL(b.dataset.blobUrl)
+              }
+              e.textContent = ''
+          }
+          get searchWithRegExp() {
+              return $id['regexp-match'].checked
+          }
+          loadQueryString(us = location.href) {
+              const u = new URL(us)
+              const q = u.searchParams
+              if (q.has('regexp-match')) $id['regexp-match'].checked = true
+              if (q.has('q')) {
+                  $id.q.value = q.get('q')
+                  this.search(q)
+              }
+          }
+          async previewHtmlHandler(evt) {
+              const e = evt.target
+              if (!e.matches('button.preview')) return
+              if (!e.dataset.blobUrl) {
+                  const u = $('a.html', e.parentNode).href
+                  const r = await fetch(u)
+                  const b = await r.blob()
+                  const f = new File(
+                      [b], e.parentNode.dataset.path,
+                      {type: 'text/html'}
+                  )
+                  const ub = URL.createObjectURL(f)
+                  e.dataset.blobUrl = ub
+              }
+              window.open(e.dataset.blobUrl)
+          }
+      }
+
+      var kBrowser = new KBrowser()
+      kBrowser.load().catch(e => console.error(e)).then(() => {
+          kBrowser.register()
+          kBrowser.loadQueryString()
+      })
+    </script>
+  </body>
+</html>
+
+
