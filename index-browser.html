@@ -197,7 +197,7 @@ async function waitUntil(f, interval, timeout) {
               if (q.has('regexp-match')) $id['regexp-match'].checked = true
               if (q.has('q')) {
                   $id.q.value = q.get('q')
-                  this.search(q)
+                  this.search(q.get('q'))
               }
           }
           async previewHtmlHandler(evt) {
