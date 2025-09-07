@@ -6,26 +6,42 @@ This is a repository for backup files of Komica Wiki.
 
 This repository require linear history. Do NOT create merge commits.
 
-## 使用方法
+## index-browser 網頁搜尋
+
+ 1. 開啟 [index-browser 網頁][index-browser]
+
+ 2. 在搜尋欄輸入關鍵字以列出標題符合的條目
+
+ 3. preview 按鈕會在新分頁開啟條目，
+    github 連結會連到該檔案在 github 上的頁面，
+    html 連結可以檢視原始碼或右鍵另存新檔。
+
+ 4. 也可以用正則表示式搜尋 (regular expression)
+
+[index-browser]: https://mwzhx.github.io/komicawiki-backup/index-browser.html
+
+## github 搜尋檔案
+
+鑑於 github 關閉訪客搜尋功能，本方法需要登入 github 才能使用
 
  1. 在搜尋欄輸入想尋找條目備份檔的條目名稱
 
     ![搜尋欄](https://user-images.githubusercontent.com/13307281/208006290-c7f10d46-d03d-4b23-a8b2-8369a1dd6962.png)
-    
+
  2. 選擇 (search) in this repository 的搜尋建議
 
     ![在本倉庫中搜尋](https://user-images.githubusercontent.com/13307281/208006495-e1e67040-91c0-4905-80d3-05a58a6a99ed.png)
-    
+
  3. 找出你覺得內容最多的條目。例如尾綴數字可能是重覆的內容，討論、投票頁不含有主要內容的可以略過。
     點擊檔名標題可以進入該檔案頁面。
 
     ![搜尋結果](https://user-images.githubusercontent.com/13307281/208006801-9e32200f-9248-461d-bab4-bb940ce61212.png)
 
  4. 在右上方的 Raw 按鈕上按右鍵，選擇鏈結另存新檔，以下載原始檔案。
-    
+
     ![另存新檔](https://user-images.githubusercontent.com/13307281/208007911-2f08b369-73dc-468f-9dd9-7c7c11a8cd7d.png)
 
-### html 格式備份
+## html 格式備份
 html 檔案原則上可以雙擊後直接在瀏覽器打開，若要自動轉換為 media wiki 格式文字，
 可以使用 [pandoc] 或 [free file convert] 進行轉換，但二者皆無法完整轉換，
 例如無法轉換回模板原始碼，轉換後的 media wiki 文字也會包含大量無法轉換的 html 原始碼。
@@ -36,13 +52,13 @@ html 檔案原則上可以雙擊後直接在瀏覽器打開，若要自動轉換
 ### pandoc 轉換教學
 
  1. 進入 [pandoc 網頁版](https://pandoc.org/try/)
- 
+
  2. 格式選擇 from `html` to `mediawiki`
- 
+
     ![格式 from html to mediawiki](https://user-images.githubusercontent.com/13307281/216226398-2ad111c8-8d0f-45c1-a404-682d4dffab33.png)
 
  3. 用 *瀏覽* 選取 html 檔案或是直接將 html 原始碼貼入文字框中
- 
+
  4. 點擊 `Convert` 按鈕，轉換結果即會在右側顯示。若有無法轉換的內容，會用綠色訊息顯示，其他轉換內容則會顯示在下方。
 
 ### free file convert 轉換教學
@@ -50,9 +66,9 @@ html 檔案原則上可以雙擊後直接在瀏覽器打開，若要自動轉換
  1. 點擊 [free file convert 網站][free file convert] 中的 File 頁籤
 
     ![file 頁籤](https://user-images.githubusercontent.com/13307281/208011773-dd3fbe0a-68b2-4428-a908-e892f480eb6f.png)
- 
- 2. 選擇檔案，並將 output format 設為 wiki ，後點擊右側步驟 3 的藍色 Convert 按鈕
-    
+
+ 2. 選擇檔案，並將 output format 設為 wiki，後點擊右側步驟 3 的藍色 Convert 按鈕
+
     ![output format wiki](https://user-images.githubusercontent.com/13307281/208012216-7e25eb68-3236-445a-b610-dde2a91f1589.png)
 
  3. 轉換成功後，點擊 download 按鈕下載
@@ -69,7 +85,7 @@ html 檔案原則上可以雙擊後直接在瀏覽器打開，若要自動轉換
 
 <div>
 
-<span>這是 Google 對 https://wiki.komica.org/index.php?title=%E5%8D%81%E9%87%8C%E5%9D%A1%E5%8A%8D%E7%A5%9E&mobileaction=toggle_view_desktop 的快取。</span> <span>這是該網頁於 2022年10月25日 15:17:52 GMT 顯示時的快照。</span> <span>在此期間，[https://wiki.komica.org/index.php?title=%E5%8D%81%E9%87%8C%E5%9D%A1%E5%8A%8D%E7%A5%9E&mobileaction=toggle_view_desktop 目前網頁]可能已經變更。</span> [http://support.google.com/websearch/bin/answer.py?hl=zh-TW&p=cached&answer=1687222 <span>瞭解更多資訊</span>.]
+<span>這是 Google 對 https://wiki.komica.org/index.php?title=%E5%8D%81%E9%87%8C%E5%9D%A1%E5%8A%8D%E7%A5%9E&mobileaction=toggle_view_desktop 的快取。</span> <span>這是該網頁於 2022 年 10 月 25 日 15:17:52 GMT 顯示時的快照。</span> <span>在此期間，[https://wiki.komica.org/index.php?title=%E5%8D%81%E9%87%8C%E5%9D%A1%E5%8A%8D%E7%A5%9E&mobileaction=toggle_view_desktop 目前網頁]可能已經變更。</span> [http://support.google.com/websearch/bin/answer.py?hl=zh-TW&p=cached&answer=1687222 <span>瞭解更多資訊</span>.]
 
 </div>
 <div>
@@ -107,7 +123,7 @@ html 檔案原則上可以雙擊後直接在瀏覽器打開，若要自動轉換
 | <span style="font-size:10px;">更新日期：2022/02/06</span>
 |-
 |
-因應近日KomicaWiki遭惡意使用者嚴重攻擊，為了減少傷害故啟用封鎖政策。對影響到其他使用者深感抱歉。當前'''僅許可'''「'''已註冊用戶'''」編輯，並暫停新用戶使用系統註冊的申請。
+因應近日 KomicaWiki 遭惡意使用者嚴重攻擊，為了減少傷害故啟用封鎖政策。對影響到其他使用者深感抱歉。當前'''僅許可'''「'''已註冊用戶'''」編輯，並暫停新用戶使用系統註冊的申請。
 如有不便，敬請見諒。
 |}
 ```
