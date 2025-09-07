@@ -16,7 +16,7 @@
     <fieldset>索引資料
       <label>url: <input name="index-path" value="https://mwzhx.github.io/komicawiki-backup/index.ls"> </label>
       <label>file: <input name="index-file" type="file"></label>
-      <button onclick="kBrowser.load()">更新</button>
+      <button name="index-update">更新</button>
     </fieldset>
     <fieldset>索引資料
     <label>搜尋 <input name="q">
@@ -26,6 +26,10 @@
     </fieldset>
 
     <output name="search-result"></output>
+
+    <footer>
+      <p>HTML 預覽功能由 <a href="https://htmlpreview.github.io/">htmlpreview</a> 驅動，原作者為 Jerzy Głowacki，在 Apache License 2.0. 下提供</p>
+    </fotter>
 
     <style>
       output > ol > li > button, output > ol > li > a {
@@ -37,8 +41,18 @@
           border: solid 1px;
           margin: 1em 0;
       }
+      .match-nothing {
+          margin: 1em;
+          color: red;
+      }
       label { display: block; }
       fieldset { margin: 1em 0; }
+      footer {
+          display: block;
+          margin: 1em;
+          color: gray;
+          font-size: smaller;
+      }
     </style>
 
     <script>
@@ -116,12 +130,10 @@ async function waitUntil(f, interval, timeout) {
           }
           register() {
               if (!this.fileList) this.load()
-              $id['search-result'].addEventListener(
-                  'click', this.previewHtmlHandler.bind(this)
-              )
               $id['q'].addEventListener('keydown', evt => {
                   if (evt.key == 'Enter') this.search(evt.target.value)
               })
+              $id['index-update'].onclick = () => this.load()
               $('[name=q] ~ button.search').addEventListener('click', evt => {
                   this.search($id['q'].value)
               })
@@ -160,32 +172,41 @@ async function waitUntil(f, interval, timeout) {
                   li.textContent = t + ' '
                   li.dataset.path = t
                   let te = t.replace(/%/g, '%25')
-                  $create('button', li, {
+                  if (/\.html?$/i.test(t)) $create('a', li, {
                       className: 'preview',
+                      target: 'blank',
+                      href: `html-preview/?${this.githubBaseUrl}/${te}`,
                       textContent: 'preview'
                   })
                   $create('a', li, {
                       className: 'github',
+                      target: 'blank',
                       href: this.githubBaseUrl + '/' + te,
                       textContent: 'github'
                   })
                   $create('a', li, {
                       className: 'html',
+                      target: 'blank',
                       title: '右鍵另存新檔以下載 html 檔案',
                       href: this.githubRawBaseUrl + '/' + te,
                       textContent: 'html'
                   })
                   return li
               }).forEach(li => ol.appendChild(li))
+              if (r.length == 0) {
+                  this.searchMatchNothing()
+              }
               let qs = '?q=' + encodeURIComponent(q)
               if (this.searchWithRegExp) qs += '&regexp-match=on'
-              history.pushState({resultHtml: ol.outerHTML, q}, null, qs)
+              history.pushState({resultHtml: e.innerHTML, q}, null, qs)
+          }
+          searchMatchNothing() {
+              const e = $id['search-result']
+              e.innerHTML = '<div class="match-nothing">match nothing</div>'
           }
           searchClear() {
               const e = $id['search-result']
-              for (const b of $all('button.preview[data-blob-url]')) {
-                  URL.revokeObjectURL(b.dataset.blobUrl)
-              }
+              e.classList.remove('match-nothing')
               e.textContent = ''
           }
           get searchWithRegExp() {
@@ -199,22 +220,6 @@ async function waitUntil(f, interval, timeout) {
                   $id.q.value = q.get('q')
                   this.search(q.get('q'))
               }
-          }
-          async previewHtmlHandler(evt) {
-              const e = evt.target
-              if (!e.matches('button.preview')) return
-              if (!e.dataset.blobUrl) {
-                  const u = $('a.html', e.parentNode).href
-                  const r = await fetch(u)
-                  const b = await r.blob()
-                  const f = new File(
-                      [b], e.parentNode.dataset.path,
-                      {type: 'text/html'}
-                  )
-                  const ub = URL.createObjectURL(f)
-                  e.dataset.blobUrl = ub
-              }
-              window.open(e.dataset.blobUrl)
           }
       }
 
