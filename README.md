@@ -9,15 +9,15 @@ This repository require linear history. Do NOT create merge commits.
 ## index-browser 網頁搜尋
 
  1. 開啟 [index-browser 網頁][index-browser]
- 
+
  2. 在搜尋欄輸入關鍵字以列出標題符合的條目
- 
+
  3. preview 按鈕會在新分頁開啟條目，
     github 連結會連到該檔案在 github 上的頁面，
     html 連結可以檢視原始碼或右鍵另存新檔。
 
  4. 也可以用正則表示式搜尋 (regular expression)
- 
+
 [index-browser]: https://mwzhx.github.io/komicawiki-backup/index-browser.html
 
 ## github 搜尋檔案
@@ -27,18 +27,18 @@ This repository require linear history. Do NOT create merge commits.
  1. 在搜尋欄輸入想尋找條目備份檔的條目名稱
 
     ![搜尋欄](https://user-images.githubusercontent.com/13307281/208006290-c7f10d46-d03d-4b23-a8b2-8369a1dd6962.png)
-    
+
  2. 選擇 (search) in this repository 的搜尋建議
 
     ![在本倉庫中搜尋](https://user-images.githubusercontent.com/13307281/208006495-e1e67040-91c0-4905-80d3-05a58a6a99ed.png)
-    
+
  3. 找出你覺得內容最多的條目。例如尾綴數字可能是重覆的內容，討論、投票頁不含有主要內容的可以略過。
     點擊檔名標題可以進入該檔案頁面。
 
     ![搜尋結果](https://user-images.githubusercontent.com/13307281/208006801-9e32200f-9248-461d-bab4-bb940ce61212.png)
 
  4. 在右上方的 Raw 按鈕上按右鍵，選擇鏈結另存新檔，以下載原始檔案。
-    
+
     ![另存新檔](https://user-images.githubusercontent.com/13307281/208007911-2f08b369-73dc-468f-9dd9-7c7c11a8cd7d.png)
 
 ## html 格式備份
@@ -52,13 +52,13 @@ html 檔案原則上可以雙擊後直接在瀏覽器打開，若要自動轉換
 ### pandoc 轉換教學
 
  1. 進入 [pandoc 網頁版](https://pandoc.org/try/)
- 
+
  2. 格式選擇 from `html` to `mediawiki`
- 
+
     ![格式 from html to mediawiki](https://user-images.githubusercontent.com/13307281/216226398-2ad111c8-8d0f-45c1-a404-682d4dffab33.png)
 
  3. 用 *瀏覽* 選取 html 檔案或是直接將 html 原始碼貼入文字框中
- 
+
  4. 點擊 `Convert` 按鈕，轉換結果即會在右側顯示。若有無法轉換的內容，會用綠色訊息顯示，其他轉換內容則會顯示在下方。
 
 ### free file convert 轉換教學
@@ -66,9 +66,9 @@ html 檔案原則上可以雙擊後直接在瀏覽器打開，若要自動轉換
  1. 點擊 [free file convert 網站][free file convert] 中的 File 頁籤
 
     ![file 頁籤](https://user-images.githubusercontent.com/13307281/208011773-dd3fbe0a-68b2-4428-a908-e892f480eb6f.png)
- 
+
  2. 選擇檔案，並將 output format 設為 wiki，後點擊右側步驟 3 的藍色 Convert 按鈕
-    
+
     ![output format wiki](https://user-images.githubusercontent.com/13307281/208012216-7e25eb68-3236-445a-b610-dde2a91f1589.png)
 
  3. 轉換成功後，點擊 download 按鈕下載
