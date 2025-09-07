@@ -109,7 +109,7 @@ async function waitUntil(f, interval, timeout) {
               if (!t) {
                   this.path = $id['index-path'].value
                   const r = await fetch(this.path)
-                  let t = await r.text()
+                  t = await r.text()
               }
               t = t.trim().replace(/\r/g, '')
               this.fileList = t.split('\n')
