@@ -129,6 +129,7 @@ async function waitUntil(f, interval, timeout) {
               this.fileList = t.split('\n')
           }
           register() {
+              this.titleDefault = document.title
               if (!this.fileList) this.load()
               $id['q'].addEventListener('keydown', evt => {
                   if (evt.key == 'Enter') this.search(evt.target.value)
@@ -145,12 +146,21 @@ async function waitUntil(f, interval, timeout) {
                   const o = evt.state
                   $id['search-result'].innerHTML = o.resultHtml
                   $id.q = o.q
+                  this.searchTitleSet(o.q, o.count)
               })
           }
           githubBaseUrl = 'https://github.com/mwzhx/komicawiki-backup/blob/master'
           // githubRawBaseUrl = 'https://github.com/mwzhx/komicawiki-backup/raw/refs/heads/master'
           githubRawBaseUrl = 'https://raw.githubusercontent.com/mwzhx/komicawiki-backup/refs/heads/master'
           regexpFormat = /^\/(.+)\/(\w*)$/
+          titleDefault = null
+          searchTitleSet(q, count) {
+              const d = document
+              if (q == null) d.title = this.titleDefault
+              else {
+                  d.title = `搜尋:${q}(${count}) - ${this.titleDefault}`
+              }
+          }
           search(q) {
               let r
               if (this.searchWithRegExp) {
@@ -198,7 +208,9 @@ async function waitUntil(f, interval, timeout) {
               }
               let qs = '?q=' + encodeURIComponent(q)
               if (this.searchWithRegExp) qs += '&regexp-match=on'
-              history.pushState({resultHtml: e.innerHTML, q}, null, qs)
+              const state = {resultHtml: e.innerHTML, q, count: r.length}
+              history.pushState(state, null, qs)
+              this.searchTitleSet(q, r.length)
           }
           searchMatchNothing() {
               const e = $id['search-result']
