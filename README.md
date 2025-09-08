@@ -2,10 +2,6 @@
 
 This is a repository for backup files of Komica Wiki.
 
-## Contributing
-
-This repository require linear history. Do NOT create merge commits.
-
 ## index-browser 網頁搜尋
 
  1. 開啟 [index-browser 網頁][index-browser]
@@ -142,3 +138,33 @@ html 檔案原則上可以雙擊後直接在瀏覽器打開，若要自動轉換
 隨後使用 *Download File* 按鈕或是複製貼上到記事本皆可。
 
 [md]: https://www.tutorialspoint.com/online_markdown_editor.php
+
+
+## Contributing
+
+This repository require linear history. Do NOT create merge commits.
+
+### web 分支編輯教學
+web 分支是 github-page 用的分支，
+是用 [特殊方式][orphan] 建立的分支，
+和 master 分支沒有共同的祖先。
+
+[orphan]: https://stackoverflow.com/a/1384723
+
+直接 switch 時 komicawiki-backup repo 裡海量的檔案會淹死你，
+要編輯的話建議可以另外 clone 在新的目錄，
+
+```sh
+git clone --single-branch --branch web \
+    github:Fandom-zh/komicawiki-backup \
+    komicawiki-backup-web
+```
+
+或用 worktree
+
+```sh
+git branch web origin/web
+git worktree add web
+cd web
+git log
+```
