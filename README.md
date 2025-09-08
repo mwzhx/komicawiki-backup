@@ -156,7 +156,7 @@ web 分支是 github-page 用的分支，
 
 ```sh
 git clone --single-branch --branch web \
-    github:Fandom-zh/komicawiki-backup \
+    https://github.com/mwzhx/komicawiki-backup \
     komicawiki-backup-web
 ```
 
