@@ -18,7 +18,7 @@
       <label>file: <input name="index-file" type="file"></label>
       <button name="index-update">更新</button>
     </fieldset>
-    <fieldset>索引資料
+    <fieldset>
     <label>搜尋 <input name="q">
       <button class="search">搜尋</button> <button class="reset">清除</button></label>
     <label title='格式 "神奇寶貝.*列表" 或是 "/jojo/i"'>
@@ -143,9 +143,9 @@ async function waitUntil(f, interval, timeout) {
                   $id['q'].focus()
               })
               window.addEventListener('popstate', evt => {
-                  const o = evt.state
+                  const o = evt.state || {resultHtml: '', q: '', count: null}
                   $id['search-result'].innerHTML = o.resultHtml
-                  $id.q = o.q
+                  $id.q.value = o.q
                   this.searchTitleSet(o.q, o.count)
               })
           }
@@ -156,7 +156,7 @@ async function waitUntil(f, interval, timeout) {
           titleDefault = null
           searchTitleSet(q, count) {
               const d = document
-              if (q == null) d.title = this.titleDefault
+              if (!q) d.title = this.titleDefault
               else {
                   d.title = `搜尋:${q}(${count}) - ${this.titleDefault}`
               }
@@ -195,11 +195,11 @@ async function waitUntil(f, interval, timeout) {
                       textContent: 'github'
                   })
                   $create('a', li, {
-                      className: 'html',
+                      className: 'raw',
                       target: 'blank',
-                      title: '右鍵另存新檔以下載 html 檔案',
+                      title: '右鍵另存新檔以下載原始檔案',
                       href: this.githubRawBaseUrl + '/' + te,
-                      textContent: 'html'
+                      textContent: 'raw'
                   })
                   return li
               }).forEach(li => ol.appendChild(li))
