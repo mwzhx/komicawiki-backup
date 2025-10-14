@@ -262,7 +262,8 @@ async function waitUntil(f, interval, timeout) {
           return m
       }
       function domClean(d) {
-          const m = $('.mw-parser-output',d)
+          const m = $('#mw-content-text .mw-parser-output',d) ||
+                $('.mw-parser-output',d)
           $all('div[id^=mf-section-]',m).forEach(d => {
               if (!d.id.match(/^mf-section-\d+$/)) return
               const f = document.createDocumentFragment()
@@ -283,7 +284,7 @@ async function waitUntil(f, interval, timeout) {
               f.append('{{h0|', ...h0.childNodes, '}}')
               h0.replaceWith(f)
           }
-          
+
           $all('a', m).forEach(a => {
               let r = a.getAttribute('href')
               try {r = decodeURIComponent(r)}
