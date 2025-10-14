@@ -142,6 +142,13 @@ async function waitUntil(f, interval, timeout) {
                   $id['q'].value = ''
                   $id['q'].focus()
               })
+              $('output').addEventListener('click', async evt => {
+                  const e = evt.target
+                  if (!e.matches('button.html-clean-copy')) return
+                  const u = $('a.raw', e.parentNode).href
+                  const m = await domCleanFromUrl(u)
+                  await navigator.clipboard.writeText(m.innerHTML)
+              })
               window.addEventListener('popstate', evt => {
                   const o = evt.state || {resultHtml: '', q: '', count: null}
                   $id['search-result'].innerHTML = o.resultHtml
@@ -201,6 +208,11 @@ async function waitUntil(f, interval, timeout) {
                       href: this.githubRawBaseUrl + '/' + te,
                       textContent: 'raw'
                   })
+                  $create('button', li, {
+                      title: '複製清理過的 html，可用於 pandoc html-to-mediawiki',
+                      textContent: 'clean html',
+                      className: 'html-clean-copy'
+                  })
                   return li
               }).forEach(li => ol.appendChild(li))
               if (r.length == 0) {
@@ -240,6 +252,77 @@ async function waitUntil(f, interval, timeout) {
           kBrowser.register()
           kBrowser.loadQueryString()
       })
+
+      async function domCleanFromUrl(u) {
+          const r = await fetch(u)
+          const h = await r.text()
+          const dp = new DOMParser()
+          const d = dp.parseFromString(h, 'text/html')
+          const m = domClean(d)
+          return m
+      }
+      function domClean(d) {
+          const m = $('.mw-parser-output',d)
+          $all('div[id^=mf-section-]',m).forEach(d => {
+              if (!d.id.match(/^mf-section-\d+$/)) return
+              const f = document.createDocumentFragment()
+              f.append(...d.childNodes)
+              d.replaceWith(f)
+          })
+
+          b: {
+              // const colorNode = $create('p', null, {style: 'background:#DDEEFF'})
+              // const color = String(colorNode.style.background)
+              let h0 = $all('.mw-parser-output div[style]',m).filter(e =>
+                  // e.style.background == color
+                  String(e.getAttribute('style')).match(/background:\s*#DDEEFF/)
+              )
+              if (h0.length != 1) break b
+              h0 = h0[0]
+              const f = document.createDocumentFragment()
+              f.append('{{h0|', ...h0.childNodes, '}}')
+              h0.replaceWith(f)
+          }
+          
+          $all('a', m).forEach(a => {
+              let r = a.getAttribute('href')
+              try {r = decodeURIComponent(r)}
+              catch (err) {}
+              if (r.startsWith('/')) r = r.slice(1)
+              if (r.startsWith('wiki/')) r = r.slice(5)
+              a.setAttribute('href', r)
+              if (r == a.textContent) {
+                  a.replaceWith(new Text(`[[${r}]]`))
+              }
+          })
+          $all('.inline-text-censored',m).forEach(e => {
+              const t = document.createDocumentFragment()
+              t.append('{{s|', ...e.childNodes, '}}')
+              e.replaceWith(t)
+          })
+          $all('.reference > a', m).forEach(a => {
+              hasReference = true
+              const e = a.parentNode
+              const id = a.getAttribute('href')
+              const note = $(`${id} > .reference-text`, m)
+              const t = document.createDocumentFragment()
+              t.append('{{ref|', ...note.childNodes, '}}')
+              e.replaceWith(t)
+          })
+          b: {
+              const refl = $('.mw-references-wrap',m)
+              if (!refl) break b
+              refl.before(new Text('{{reflist}}\n\n'))
+              refl.remove()
+          }
+          $all('#toc, .pre-content.heading-holder',m).forEach(e => e.remove())
+          $all('h1,h2,h3,h4,h5,h6,h7',m).forEach(h => {
+              const e = $('.mw-headline', h)
+              if (!e) return
+              h.replaceWith($create(h.nodeName, null, {innerHTML: e.innerHTML}))
+          })
+          return m
+      }
     </script>
   </body>
 </html>
