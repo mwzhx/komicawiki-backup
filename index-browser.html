@@ -302,7 +302,6 @@ async function waitUntil(f, interval, timeout) {
               e.replaceWith(t)
           })
           $all('.reference > a', m).forEach(a => {
-              hasReference = true
               const e = a.parentNode
               const id = a.getAttribute('href')
               const note = $(`${id} > .reference-text`, m)
