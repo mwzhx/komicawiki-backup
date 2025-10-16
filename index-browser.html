@@ -316,6 +316,9 @@ async function waitUntil(f, interval, timeout) {
               refl.remove()
           }
           $all('#toc, .pre-content.heading-holder',m).forEach(e => e.remove())
+          $all('.mw-parser-output > p > br:only-child',m).forEach(e =>
+              !e.previousSibling && !e.nextSibling && e.remove()
+          )
           $all('h1,h2,h3,h4,h5,h6,h7',m).forEach(h => {
               const e = $('.mw-headline', h)
               if (!e) return
