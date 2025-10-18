@@ -33,7 +33,8 @@
       <input type="checkbox" name="regexp-match">RegExp 匹配</label>
     </fieldset>
 
-    <output name="search-result"></output>
+    <output name="search-result" for="q"></output>
+    <output name="copy-content" style="border:none;"><textarea></textarea></output>
 
     <footer>
       <p>HTML 預覽功能由 <a href="https://htmlpreview.github.io/">htmlpreview</a> 驅動，原作者為 Jerzy Głowacki，在 Apache License 2.0. 下提供</p>
@@ -150,7 +151,7 @@ async function waitUntil(f, interval, timeout) {
                   $id['q'].value = ''
                   $id['q'].focus()
               })
-              $('output').addEventListener('click', async evt => {
+              $('output[name=search-result]').addEventListener('click', async evt => {
                   const e = evt.target
                   const bs = 'button.html-clean-copy, button.mediawiki-clean-copy'
                   if (!e.matches(bs)) return
@@ -160,7 +161,10 @@ async function waitUntil(f, interval, timeout) {
                   if (e.matches('.mediawiki-clean-copy')) {
                       r = await window.pandocHtmlToMediaWiki(r)
                   }
-                  await navigator.clipboard.writeText(r)
+                  $('output > textarea').value = r
+                  await navigator.clipboard.writeText(r).catch(err => {
+                      alert('複製失敗，請重按按鈕')
+                  })
               })
               window.addEventListener('popstate', evt => {
                   const o = evt.state || {resultHtml: '', q: '', count: null}
