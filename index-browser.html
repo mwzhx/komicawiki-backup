@@ -13,6 +13,14 @@
   </head>
   <body>
     <h1>Komica Wiki GitHub 備份瀏覽器</h1>
+    <section>
+      <p>搜尋結果旁會出現數個超連結和按鈕。</p>
+      <p>clean html 按鈕可以複製清理過的 html，
+        可用於 pandoc 轉換 (<code>pandoc -f html -t mediawiki</code>) 。</p>
+      <p>copy wiki 按鈕可以以 MediaWiki 格式語法複製，
+        原理是使用 pandoc 直接在瀏覽器內轉換，手機使用時請注意流量 (50M 內) 。</p>
+    </section>
+
     <fieldset>索引資料
       <label>url: <input name="index-path" value="https://mwzhx.github.io/komicawiki-backup/index.ls"> </label>
       <label>file: <input name="index-file" type="file"></label>
@@ -148,7 +156,11 @@ async function waitUntil(f, interval, timeout) {
                   if (!e.matches(bs)) return
                   const u = $('a.raw', e.parentNode).href
                   const m = await domCleanFromUrl(u)
-                  await navigator.clipboard.writeText(m.innerHTML)
+                  let r = m.innerHTML
+                  if (e.matches('.mediawiki-clean-copy')) {
+                      r = await window.pandocHtmlToMediaWiki(r)
+                  }
+                  await navigator.clipboard.writeText(r)
               })
               window.addEventListener('popstate', evt => {
                   const o = evt.state || {resultHtml: '', q: '', count: null}
