@@ -314,6 +314,21 @@ async function waitUntil(f, interval, timeout) {
                   a.replaceWith(new Text(`[[${r}]]`))
               }
           })
+          function unwrap(e) {
+              const f = document.createDocumentFragment()
+              f.append(...e.childNodes)
+              e.replaceWith(f)
+          }
+          $all('.pcomment-insert', m).forEach(e => unwrap(e))
+          $all('a.image', m).forEach(a => {
+              $all('span.lazy-image-placeholder', a).forEach(e => e.remove())
+              while (true) {
+                  const p = a.parentNode
+                  if (!p.matches('div[class^=float], div.center')) return
+                  if (p.childNodes.length != 1) return
+                  unwrap(a.parentNode)
+              }
+          })
           $all('.inline-text-censored',m).forEach(e => {
               const t = document.createDocumentFragment()
               t.append('{{s|', ...e.childNodes, '}}')
