@@ -335,7 +335,7 @@ async function waitUntil(f, interval, timeout) {
           })
           $all('.inline-text-censored',m).forEach(e => {
               const t = document.createDocumentFragment()
-              t.append('{{s|', ...e.childNodes, '}}')
+              t.append('{{censored|', ...e.childNodes, '}}')
               e.replaceWith(t)
           })
           $all('.reference > a', m).forEach(a => {
