@@ -290,10 +290,11 @@ async function waitUntil(f, interval, timeout) {
           domClean =
 
       function domClean(d) {
-          const m = $('#mw-content-text .mw-parser-output',d) ||
-                $('.mw-parser-output',d)
+          let m
           const $all = (q, r = m) => $all0(q, r)
           const $ = (q, r = m) => $0(q, r)
+          m = $('#mw-content-text .mw-parser-output',d) ||
+                $('.mw-parser-output',d)
           $all('div[id^=mf-section-]',m).forEach(d => {
               if (!d.id.match(/^mf-section-\d+$/)) return
               const f = document.createDocumentFragment()
