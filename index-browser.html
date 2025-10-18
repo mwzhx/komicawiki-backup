@@ -144,7 +144,8 @@ async function waitUntil(f, interval, timeout) {
               })
               $('output').addEventListener('click', async evt => {
                   const e = evt.target
-                  if (!e.matches('button.html-clean-copy')) return
+                  const bs = 'button.html-clean-copy, button.mediawiki-clean-copy'
+                  if (!e.matches(bs)) return
                   const u = $('a.raw', e.parentNode).href
                   const m = await domCleanFromUrl(u)
                   await navigator.clipboard.writeText(m.innerHTML)
@@ -212,6 +213,11 @@ async function waitUntil(f, interval, timeout) {
                       title: '複製清理過的 html，可用於 pandoc html-to-mediawiki',
                       textContent: 'clean html',
                       className: 'html-clean-copy'
+                  })
+                  $create('button', li, {
+                      title: '以 MediaWiki 格式語法複製，使用 pandoc 轉換，流量注意 (50M 內)',
+                      textContent: 'copy wiki',
+                      className: 'mediawiki-clean-copy'
                   })
                   return li
               }).forEach(li => ol.appendChild(li))
@@ -325,6 +331,18 @@ async function waitUntil(f, interval, timeout) {
               h.replaceWith($create(h.nodeName, null, {innerHTML: e.innerHTML}))
           })
           return m
+      }
+    </script>
+    <script type="module">
+      const w = window
+      w.pandoc = null
+      w.pandocHtmlToMediaWiki = async function (s) {
+          if (!w.pandoc) {
+              const esm = await import('./pandoc/index.js')
+              w.pandoc = esm.pandoc
+              return w.pandocHtmlToMediaWiki(s)
+          }
+          return w.pandoc('-f html -t mediawiki', s)
       }
     </script>
   </body>
