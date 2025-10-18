@@ -163,7 +163,7 @@ async function waitUntil(f, interval, timeout) {
                   }
                   $('output > textarea').value = r
                   await navigator.clipboard.writeText(r).catch(err => {
-                      alert('複製失敗，請重按按鈕')
+                      alert('複製失敗，請重按按鈕或自行於下方文字框複製')
                   })
               })
               window.addEventListener('popstate', evt => {
@@ -283,9 +283,17 @@ async function waitUntil(f, interval, timeout) {
           const m = domClean(d)
           return m
       }
+      var domClean
+      {
+          const $all0 = $all
+          const $0 = $
+          domClean =
+
       function domClean(d) {
           const m = $('#mw-content-text .mw-parser-output',d) ||
                 $('.mw-parser-output',d)
+          const $all = (q, r = m) => $all0(q, r)
+          const $ = (q, r = m) => $0(q, r)
           $all('div[id^=mf-section-]',m).forEach(d => {
               if (!d.id.match(/^mf-section-\d+$/)) return
               const f = document.createDocumentFragment()
@@ -338,6 +346,19 @@ async function waitUntil(f, interval, timeout) {
               t.append('{{censored|', ...e.childNodes, '}}')
               e.replaceWith(t)
           })
+          $all('ruby').forEach(e => {
+              const f = document.createDocumentFragment()
+              $all('rp', e).forEach(e => e.remove())
+              f.append('{{ruby|')
+              const rt = $('rt', e)
+              rt.remove()
+              f.append(...e.childNodes, '|', ...rt.childNodes)
+              if (e.hasAttribute('style')) {
+                  f.appendChild(`|style = ${e.getAttribute('style')}`)
+              }
+              f.append('}}')
+              e.replaceWith(f)
+          })
           $all('.reference > a', m).forEach(a => {
               const e = a.parentNode
               const id = a.getAttribute('href')
@@ -362,6 +383,7 @@ async function waitUntil(f, interval, timeout) {
               h.replaceWith($create(h.nodeName, null, {innerHTML: e.innerHTML}))
           })
           return m
+      }
       }
     </script>
     <script type="module">
