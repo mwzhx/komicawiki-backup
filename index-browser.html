@@ -19,6 +19,7 @@
         可用於 pandoc 轉換 (<code>pandoc -f html -t mediawiki</code>) 。</p>
       <p>copy wiki 按鈕可以以 MediaWiki 格式語法複製，
         原理是使用 pandoc 直接在瀏覽器內轉換，手機使用時請注意流量 (50M 內) 。</p>
+      <p>html to wiki 按鈕，可以把底部輸入框中的 html 轉換為 media wiki 語法。可以在 web archive 中要轉換的網頁，按右鍵另存新檔，把檔案拖曳到輸入框中，再按轉換即可。</p>
     </section>
 
     <fieldset>索引資料
@@ -182,6 +183,15 @@ async function waitUntil(f, interval, timeout) {
                       pandocHtmlToMediaWiki(m.innerHTML)
                           .then(w => ta.value = w)
                   }
+
+                  ta.addEventListener('dragover', evt => evt.preventDefault())
+                  ta.addEventListener('drop', async evt => {
+                      const d = evt.dataTransfer
+                      if (d.files.length != 1) return
+                      const f = d.files[0]
+                      const t = await f.text()
+                      evt.target.value = t
+                  })
               }
               window.addEventListener('popstate', evt => {
                   const o = evt.state || {resultHtml: '', q: '', count: null}
@@ -341,6 +351,8 @@ async function waitUntil(f, interval, timeout) {
               let r = a.getAttribute('href')
               try {r = decodeURIComponent(r)}
               catch (err) {}
+              const wadre = /^https?:..web.archive.org\//
+              if (r.match(wadre)) r = r.replace(wadre, '/')
               const ware = /^\/web\/\d+\/https?:..wiki.komica.org/
               if (r.match(ware)) r = r.replace(ware, '')
               if (r.startsWith('/')) r = r.slice(1)
