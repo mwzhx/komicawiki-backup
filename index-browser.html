@@ -13,14 +13,15 @@
   </head>
   <body>
     <h1>Komica Wiki GitHub 備份瀏覽器</h1>
-    <section>
+    <details>
+      <summary>使用教學</summary>
       <p>搜尋結果旁會出現數個超連結和按鈕。</p>
       <p>clean html 按鈕可以複製清理過的 html，
         可用於 pandoc 轉換 (<code>pandoc -f html -t mediawiki</code>) 。</p>
       <p>copy wiki 按鈕可以以 MediaWiki 格式語法複製，
         原理是使用 pandoc 直接在瀏覽器內轉換，手機使用時請注意流量 (50M 內) 。</p>
-      <p>html to wiki 按鈕，可以把底部輸入框中的 html 轉換為 media wiki 語法。可以在 web archive 中要轉換的網頁，按右鍵另存新檔，把檔案拖曳到輸入框中，再按轉換即可。</p>
-    </section>
+      <p>底部的 html to wiki 按鈕，將 html 貼在底部的輸入框，就能把 html 轉換為 media wiki 語法。可以在 web archive 中找到要轉換的網頁，按右鍵另存新檔，再把檔案拖曳到輸入框中，按轉換即可。</p>
+    </details>
 
     <fieldset>索引資料
       <label>url: <input name="index-path" value="https://mwzhx.github.io/komicawiki-backup/index.ls"> </label>
@@ -67,6 +68,12 @@
           margin: 1em;
           color: gray;
           font-size: smaller;
+      }
+      details > summary {
+          margin: 1em;
+      }
+      details > * {
+          margin-left: 1.5em;
       }
     </style>
 
