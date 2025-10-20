@@ -20,7 +20,7 @@
         可用於 pandoc 轉換 (<code>pandoc -f html -t mediawiki</code>) 。</p>
       <p>copy wiki 按鈕可以以 MediaWiki 格式語法複製，
         原理是使用 pandoc 直接在瀏覽器內轉換，手機使用時請注意流量 (50M 內) 。</p>
-      <p>底部的 html to wiki 按鈕，將 html 貼在底部的輸入框，就能把 html 轉換為 media wiki 語法。可以在 web archive 中找到要轉換的網頁，按右鍵另存新檔，再把檔案拖曳到輸入框中，按轉換即可。</p>
+      <p>底部的 html to wiki 按鈕，將 html 貼在底部的輸入框，就能把 html 轉換為 media wiki 語法。可以在 web archive 中找到要轉換的網頁，按右鍵另存新檔，再把檔案拖曳到輸入框中，按轉換即可。也能使用檔案輸入框的瀏覽功能選來選擇檔案。</p>
     </details>
 
     <fieldset>索引資料
@@ -39,7 +39,8 @@
 
     <button class="html-to-mediawiki" title="由 html 轉換為 MediaWiki">
       html to wiki</button>
-    <output name="copy-content" style="border:none;"><textarea></textarea></output>
+    <input type="file" name="file">
+    <textarea name="textarea"></textarea>
 
     <footer>
       <p>HTML 預覽功能由 <a href="https://htmlpreview.github.io/">htmlpreview</a> 驅動，原作者為 Jerzy Głowacki，在 Apache License 2.0. 下提供</p>
@@ -74,6 +75,12 @@
       }
       details > * {
           margin-left: 1.5em;
+      }
+      textarea {
+          display: block;
+          margin: 1em 0;
+          width: 50%;
+          height: 10em;
       }
     </style>
 
@@ -174,15 +181,14 @@ async function waitUntil(f, interval, timeout) {
                   if (e.matches('.mediawiki-clean-copy')) {
                       r = await window.pandocHtmlToMediaWiki(r)
                   }
-                  $('output > textarea').value = r
+                  $('textarea[name=textarea]').value = r
                   await navigator.clipboard.writeText(r).catch(err => {
                       alert('複製失敗，請重按按鈕或自行於下方文字框複製')
                   })
               })
               {
-                  const o = $('button.html-to-mediawiki + output[name=copy-content]')
-                  const ta = $('textarea', o)
-                  const b = o.previousElementSibling
+                  const b = $('button.html-to-mediawiki')
+                  const ta = $('[name=textarea]')
                   b.onclick = evt => {
                       const h = ta.value
                       const d = htmlToDom(h)
@@ -199,6 +205,14 @@ async function waitUntil(f, interval, timeout) {
                       const t = await f.text()
                       evt.target.value = t
                   })
+                  $('input[name=file]').oninput = async evt => {
+                      const e = evt.target
+                      const f = e.files[0]
+                      if (!f) return
+                      const text = await f.text()
+                      ta.value = text
+                      e.value = '' // reset file
+                  }
               }
               window.addEventListener('popstate', evt => {
                   const o = evt.state || {resultHtml: '', q: '', count: null}
