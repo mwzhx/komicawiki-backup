@@ -323,6 +323,10 @@ async function waitUntil(f, interval, timeout) {
           kBrowser.loadQueryString()
       })
 
+      var convertComment =
+`@convert-with mwzhx/komicawiki-backup/web/index-browser
+convert from html backup, see
+https://mwzhx.github.io/komicawiki-backup/index-browser.html`
       function htmlToDom(h) {
           const dp = new DOMParser()
           const d = dp.parseFromString(h, 'text/html')
@@ -398,6 +402,11 @@ async function waitUntil(f, interval, timeout) {
                   unwrap(a.parentNode)
               }
           })
+          $all('s').forEach(e => {
+              e.prepend('{{s|')
+              e.append('}}')
+              unwrap(e)
+          })
           $all('.inline-text-censored',m).forEach(e => {
               const t = document.createDocumentFragment()
               t.append('{{censored|', ...e.childNodes, '}}')
@@ -439,6 +448,8 @@ async function waitUntil(f, interval, timeout) {
               if (!e) return
               h.replaceWith($create(h.nodeName, null, {innerHTML: e.innerHTML}))
           })
+          const c = document.createComment(convertComment)
+          m.prepend(c)
           return m
       }
       }
@@ -452,7 +463,8 @@ async function waitUntil(f, interval, timeout) {
               w.pandoc = esm.pandoc
               return w.pandocHtmlToMediaWiki(s)
           }
-          return w.pandoc('-f html -t mediawiki', s)
+          const wt = w.pandoc('-f html -t mediawiki', s)
+          return `<!--${convertComment}-->` + wt
       }
     </script>
   </body>
