@@ -392,6 +392,13 @@ https://mwzhx.github.io/komicawiki-backup/index-browser.html`
               f.append(...e.childNodes)
               e.replaceWith(f)
           }
+          // fix [[File:image.jpg]]
+          $all('a>noscript>img').forEach(e => {
+              const loader = $('.lazy-image-placeholder', e.parentNode.parentNode)
+              if (loader) loader.remove()
+              if (e.parentNode.childNodes.length == 1) unwrap(e.parentNode)
+              if (e.parentNode.childNodes.length == 1) unwrap(e.parentNode)
+          })
           $all('.pcomment-insert', m).forEach(e => unwrap(e))
           $all('a.image', m).forEach(a => {
               $all('span.lazy-image-placeholder', a).forEach(e => e.remove())
