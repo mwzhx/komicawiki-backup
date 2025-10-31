@@ -324,9 +324,8 @@ async function waitUntil(f, interval, timeout) {
       })
 
       var convertComment =
-`@convert-with mwzhx/komicawiki-backup/web/index-browser
-convert from html backup, see
-https://mwzhx.github.io/komicawiki-backup/index-browser.html`
+`@convert-with https://mwzhx.github.io/komicawiki-backup/index-browser.html
+convert from html`
       function htmlToDom(h) {
           const dp = new DOMParser()
           const d = dp.parseFromString(h, 'text/html')
@@ -383,7 +382,8 @@ https://mwzhx.github.io/komicawiki-backup/index-browser.html`
               if (r.startsWith('/')) r = r.slice(1)
               if (r.startsWith('wiki/')) r = r.slice(5)
               a.setAttribute('href', r)
-              if (r == a.textContent) {
+              const isAbs = /^https?:/.test(r)
+              if (!isAbs && r == a.textContent) {
                   a.replaceWith(new Text(`[[${r}]]`))
               }
           })
