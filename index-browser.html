@@ -433,6 +433,36 @@ convert from html`
               f.append('}}')
               e.replaceWith(f)
           })
+          $all('li dl').forEach(dl => {
+              for (const e of Array.from(dl.childNodes)) {
+                  if (e.nodeName == 'DT') {
+                      let br = null
+                      if (e.lastChild.nodeName != 'BR') br = $create('br')
+                      e.prepend(`'''`)
+                      e.append(`'''`)
+                      if (br) e.append(br)
+                      unwrap(e)
+                  }
+                  if (e.nodeName == 'DD') {
+                      let br = null
+                      if (e.lastChild.nodeName != 'BR') br = $create('br')
+                      if (br) e.append(br)
+                      unwrap(e)
+                  }
+              }
+              dl.prepend('{{html-comment|dl}}')
+              unwrap(dl)
+        })
+          $all('li > br:last-child').forEach(br => {
+            const li = br.parentNode
+            if (li.lastChild != br) return
+            while (li.lastChild.nodeName == 'BR') {
+              li.lastChild.remove()
+            }
+          })
+          $all('li br').forEach(br => {
+            br.replaceWith(document.createTextNode('{{br}}'))
+          })
           $all('.reference > a', m).forEach(a => {
               const e = a.parentNode
               const id = a.getAttribute('href')
@@ -465,6 +495,11 @@ convert from html`
     <script type="module">
       const w = window
       w.pandoc = null
+      w.pandocMediaWikiPostProcess = function (s) {
+          s = s.replace(/{{br}}/g, '<br>')
+          s = s.replace(/{{html-comment\|(.*?)}}/g, '<!--$1-->')
+          return `<!--${convertComment}-->` + s
+      }
       w.pandocHtmlToMediaWiki = async function (s) {
           if (!w.pandoc) {
               const esm = await import('./pandoc/index.js')
@@ -472,7 +507,7 @@ convert from html`
               return w.pandocHtmlToMediaWiki(s)
           }
           const wt = w.pandoc('-f html -t mediawiki', s)
-          return `<!--${convertComment}-->` + wt
+          return w.pandocMediaWikiPostProcess(wt)
       }
     </script>
   </body>
