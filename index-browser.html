@@ -420,6 +420,18 @@ convert from html`
               t.append('{{censored|', ...e.childNodes, '}}')
               e.replaceWith(t)
           })
+          $all('span[style]').forEach(e => {
+            const s = e.style
+            const m = ['', '', e.textContent]
+            for (const k of s) {
+              if (k == 'color') m[0] = s.getPropertyValue(k)
+              else if (k == 'background-color') m[1] = s.getPropertyValue(k)
+              else return
+            }
+            e.textContent = `{{color|${m.join('|')}}}`
+            unwrap(e)
+          })
+          // todo blurry
           $all('ruby').forEach(e => {
               const f = document.createDocumentFragment()
               $all('rp', e).forEach(e => e.remove())
