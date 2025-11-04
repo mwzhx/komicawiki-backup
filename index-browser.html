@@ -510,6 +510,7 @@ convert from html`
       w.pandocMediaWikiPostProcess = function (s) {
           s = s.replace(/{{br}}/g, '<br>')
           s = s.replace(/{{html-comment\|(.*?)}}/g, '<!--$1-->')
+          s = s.replace(/\n<span id=".*?"><\/span>\n=/g, '\n=')
           return `<!--${convertComment}-->` + s
       }
       w.pandocHtmlToMediaWiki = async function (s) {
