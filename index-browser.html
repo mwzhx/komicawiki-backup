@@ -477,8 +477,9 @@ convert from html`
           })
           $all('.reference > a', m).forEach(a => {
               const e = a.parentNode
-              const id = a.getAttribute('href')
-              const note = $(`${id} > .reference-text`, m)
+              const id = a.getAttribute('href').slice(1)
+              let note = $(`li[id = "${id}"] > .reference-text`, m)
+              note = note.cloneNode(true)
               const t = document.createDocumentFragment()
               t.append('{{ref|', ...note.childNodes, '}}')
               e.replaceWith(t)
