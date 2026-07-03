@@ -378,7 +378,7 @@ convert from html`
               catch (err) {}
               const wadre = /^https?:..web.archive.org\//
               if (r.match(wadre)) r = r.replace(wadre, '/')
-              const ware = /^\/web\/\d+\/https?:..wiki.komica.org/
+              const ware = /^(\/web\/\d+\/)?https?:..wiki.komica.org/
               if (r.match(ware)) r = r.replace(ware, '')
               if (r.startsWith('/')) r = r.slice(1)
               if (r.startsWith('wiki/')) r = r.slice(5)
@@ -477,7 +477,8 @@ convert from html`
           })
           $all('.reference > a', m).forEach(a => {
               const e = a.parentNode
-              const id = a.getAttribute('href').slice(1)
+              const url = new URL(a.href)
+              const id = url.hash.slice(1)
               let note = $(`li[id = "${id}"] > .reference-text`, m)
               note = note.cloneNode(true)
               const t = document.createDocumentFragment()
